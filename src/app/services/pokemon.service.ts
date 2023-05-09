@@ -1,58 +1,57 @@
 import { Pokemon } from './../models/pokemon';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, forkJoin, map, mergeMap } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PokemonService {
-  
   private _nextUrl: string;
- 
-  constructor(private http: HttpClient) { 
+
+  constructor(private http: HttpClient) {
     this._nextUrl = 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0';
   }
- 
+
   public get nextUrl(): string {
     return this._nextUrl;
   }
   public set nextUrl(value: string) {
     this._nextUrl = value;
   }
- 
-  getPokemons() {
-    const url = this.nextUrl;
-    const pokemons: Pokemon[] = [];
 
+  getPokemons():any {
+    const url = this.nextUrl;
+    
     if (url) {
       const options = {
         url,
         headers: {},
         params: {},
       };
-
-      this.http.get<any>(options.url, {})
-        .subscribe(
-          response => {
+      
+      return this.http.get<any>(options.url, {}).pipe(
+        mergeMap((response: any) => {
+          const pokemons: Observable<Pokemon>[] = [];
           this.nextUrl = response.next;
-          
-          response.results.forEach((pokemon: any) => {
-            this.http.get<any>(pokemon.url, {})
-              .subscribe(
-                response => {
-                  const pokemonObject = new Pokemon(response);
-                  pokemons.push(pokemonObject);
-                },
-                error => {
-                  console.error(error);
-                });
-          });
-        },
-        error => {
-          console.error(error);
-        });
-    }
 
-    return pokemons;
+          response.results.map((pokemon: any) => {
+            pokemons.push(this.getPokemon(pokemon));
+          });
+
+          return forkJoin(pokemons);
+
+          // return pokemons;
+        })
+      );
+    }
+  }
+
+  getPokemon(pokemon: any): any {
+    return this.http.get<any>(pokemon.url, {}).pipe(
+      map((response) => {
+        return new Pokemon(response);
+      })
+    );
   }
 }

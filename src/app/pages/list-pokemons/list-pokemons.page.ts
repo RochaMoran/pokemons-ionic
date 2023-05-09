@@ -14,9 +14,14 @@ export class ListPokemonsPage implements OnInit {
   ngOnInit(): void {
     this.getPokemons();
   }
-
-  getPokemons(): void {
-    this.pokemons = this.pokemonService.getPokemons();
+  
+  getPokemons(event:any = null): any {
+    this.pokemonService.getPokemons().subscribe((resp: Pokemon[]) => {
+      this.pokemons.push(...resp);
+      if (event) {
+        event.target.complete();
+      }
+    });
   }
 
 }

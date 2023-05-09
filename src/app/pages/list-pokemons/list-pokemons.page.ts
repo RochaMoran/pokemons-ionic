@@ -9,13 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ListPokemonsPage implements OnInit {
   pokemons: Pokemon[] = [];
-  constructor(private pokemonService: PokemonService) { }
+  constructor(private pokemonService: PokemonService) {}
 
   ngOnInit(): void {
     this.getPokemons();
   }
-  
-  getPokemons(event:any = null): any {
+
+  getPokemons(event: any = null): any {
     this.pokemonService.getPokemons().subscribe((resp: Pokemon[]) => {
       this.pokemons.push(...resp);
       if (event) {
@@ -23,5 +23,4 @@ export class ListPokemonsPage implements OnInit {
       }
     });
   }
-
 }

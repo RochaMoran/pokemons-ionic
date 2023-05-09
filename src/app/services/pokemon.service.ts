@@ -20,18 +20,20 @@ export class PokemonService {
     this._nextUrl = value;
   }
 
-  getPokemons():any {
+  getPokemons(): any {
     const url = this.nextUrl;
-    
+
     if (url) {
       const options = {
         url,
         headers: {},
         params: {},
       };
-      
+
       return this.http.get<any>(options.url, {}).pipe(
+        //Transforma la respuesta en un observable
         mergeMap((response: any) => {
+          //Almacenara los observables de getPokemon
           const pokemons: Observable<Pokemon>[] = [];
           this.nextUrl = response.next;
 
@@ -39,9 +41,8 @@ export class PokemonService {
             pokemons.push(this.getPokemon(pokemon));
           });
 
+          //Espera y fusiona los resultados de los observables en un solo observable
           return forkJoin(pokemons);
-
-          // return pokemons;
         })
       );
     }

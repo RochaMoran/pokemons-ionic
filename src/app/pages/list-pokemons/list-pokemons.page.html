@@ -4,7 +4,7 @@
   <ion-list *ngIf="pokemons.length > 0">
     <ion-grid *ngFor="let pokemon of pokemons">
       <ion-row class="ion-align-items-center">
-        <ion-col size="3">
+        <ion-col size="3" (click)="handleDetail(pokemon)">
           <ion-img [src]="pokemon.sprite"></ion-img>
         </ion-col>
         <ion-col size="4">

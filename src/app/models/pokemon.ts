@@ -28,7 +28,7 @@ export class Pokemon {
     }
 
     getHiddenAbility(): any {
-        return this.abilities.find(ability => ability.is_hidden).name;
+        return this.abilities.find(ability => ability.is_hidden).ability.name;
     }
 
     getAbilities(): any[] {
@@ -39,11 +39,11 @@ export class Pokemon {
         return this.stats.find(stat => stat.stat.name === nameStat).base_stat;
     }
 
-    getHeigthToMeters(): number {
-        return this.height / 10;
+    getHeigthToMeters(): string {
+        return (this.height / 10) + "M";
     }
     
-    getWeightToMeters(): number {
-        return this.weight / 10;
+    getWeightToMeters(): string {
+        return (this.weight / 10) + "Kg";
     }
 }
